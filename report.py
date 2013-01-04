@@ -32,15 +32,28 @@ DAYS = ('Sun', 'Mon', 'Thu', 'Wed', 'Tue', 'Fri', 'Sat')
 DAYS_JP = tuple(u'日月火水木金土')
 
 
-def week():
-    hours = list(range(5, 29))
+
+from datetime import date
+from datetime import time
+from datetime import datetime
+from datetime import timedelta
+
+def srcmock(start, d, h):
+    return "%s"%(datetime.combine(start, time()) + d + h)
+
+
+def week(start, src):
+    assert isinstance(start, date)
+    hours = [timedelta(hours=x) for x in range(5, 29)]
+
     corner = ['hour/day']
     col_headers = DAYS_JP
     rows_headers = corner + hours
 
     xs = []
-    for d in col_headers:
-        x = ["%s"%(d,)] + ["%s %d00"%(d, h) for h in hours]
+    for i, _ in enumerate(col_headers):
+        d = timedelta(days=i)
+        x = ["%s"%(d,)] + [src(start, d, h) for h in hours]
         xs.append(x)
     data = [rows_headers] + xs
 
@@ -53,14 +66,15 @@ def week():
     return t
 
 
-doc = SimpleDocTemplate("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", pagesize=A4)
-content = [Spacer(1, 20*mm)]
+if __name__ == "__main__":
+    doc = SimpleDocTemplate("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", pagesize=A4)
+    content = [Spacer(1, 20*mm)]
 
-style = styles["Normal"]
+    style = styles["Normal"]
 
-content.append(week())
+    content.append(week(date.today(), srcmock))
 
-content.append(Spacer(1, 5*mm))
-doc.build(content)
+    content.append(Spacer(1, 5*mm))
+    doc.build(content)
 
 
