@@ -66,15 +66,18 @@ def week(start, src):
     return t
 
 
-if __name__ == "__main__":
-    doc = SimpleDocTemplate("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", pagesize=A4)
+def build(fname, start, src):
+    doc = SimpleDocTemplate(fname, pagesize=A4)
     content = [Spacer(1, 20*mm)]
 
     style = styles["Normal"]
 
-    content.append(week(date.today(), srcmock))
+    content.append(week(start, src))
 
     content.append(Spacer(1, 5*mm))
     doc.build(content)
+
+if __name__ == "__main__":
+    build("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", date.today(), srcmock)
 
 
