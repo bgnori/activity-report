@@ -5,6 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
 
 from reportlab.rl_config import defaultPageSize
 
@@ -27,6 +28,10 @@ from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('IPA Gothic',
     '/usr/share/fonts/ipa-gothic/ipag.ttf'))
 
+styles['Normal'].fontName = 'IPA Gothic'
+styles.add(ParagraphStyle(name='TableCell',
+        parent=styles['Normal'],
+        fontSize=8,))
 
 DAYS = ('Sun', 'Mon', 'Thu', 'Wed', 'Tue', 'Fri', 'Sat')
 DAYS_JP = tuple(u'日月火水木金土')
@@ -45,6 +50,7 @@ def srcmock(start, d, h):
 def week(start, src):
     assert isinstance(start, date)
     hours = [timedelta(hours=x) for x in range(5, 29)]
+    cellstyle = styles['TableCell']
 
     corner = ['hour/day']
     col_headers = DAYS_JP
@@ -53,14 +59,16 @@ def week(start, src):
     xs = []
     for i, _ in enumerate(col_headers):
         d = timedelta(days=i)
-        x = ["%s"%(d,)] + [src(start, d, h) for h in hours]
+        x = ["%s"%(start+d,)] + [Paragraph(src(start, d, h), cellstyle) for h in hours]
         xs.append(x)
     data = [rows_headers] + xs
 
-    t = Table(zip(*data))
+    t = Table(zip(*data), colWidths=25*mm, rowHeights=9*mm)
 
     t.setStyle([
             ('FONT', (0,0), (-1,-1), 'IPA Gothic'),
+            ('FONTSIZE', (0,0), (-1,-1), 8),
+            ('GRID', (0,0), (-1, -1), 0.5, colors.black),
             ('TEXTCOLOR', (1,0), (1,0), colors.red),
             ('TEXTCOLOR', (7,0), (7,0), colors.blue)])
     return t
@@ -68,7 +76,7 @@ def week(start, src):
 
 def build(fname, start, src):
     doc = SimpleDocTemplate(fname, pagesize=A4)
-    content = [Spacer(1, 20*mm)]
+    content = [Spacer(1, 5*mm)]
 
     style = styles["Normal"]
 
