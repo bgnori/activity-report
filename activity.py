@@ -64,7 +64,8 @@ def foo(since, until=None):
             yield [(datetime.combine(since, time()) + d, a) for d, a in activies(f)]
         since += Aday
 
-for v in sorted(sum(foo(date(2012, 12, 21)), []), key=lambda p: p[0]):
-    for t in v:
-        print t 
+if __name__ == "__main__":
+    for v in sorted(sum(foo(date(2012, 12, 21)), []), key=lambda p: p[0]):
+        for t in v:
+            print t 
 
