@@ -15,6 +15,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.platypus import PageTemplate
 from reportlab.platypus import Table
 
+from config import config
 
 PAGE_HEIGHT = defaultPageSize[1]
 PAGE_WIGTH = defaultPageSize[0]
@@ -25,10 +26,10 @@ pageinfo = "platypus example"
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-pdfmetrics.registerFont(TTFont('IPA Gothic',
-    '/usr/share/fonts/ipa-gothic/ipag.ttf'))
+pdfmetrics.registerFont(
+    TTFont(config['font']['name'], config['font']['path']))
 
-styles['Normal'].fontName = 'IPA Gothic'
+styles['Normal'].fontName = config['font']['name']
 styles.add(ParagraphStyle(name='TableCell',
         parent=styles['Normal'],
         fontSize=8,))
@@ -66,7 +67,7 @@ def week(start, src):
     t = Table(zip(*data), colWidths=25*mm, rowHeights=9*mm)
 
     t.setStyle([
-            ('FONT', (0,0), (-1,-1), 'IPA Gothic'),
+            ('FONT', (0,0), (-1,-1), config['font']['name']),
             ('FONTSIZE', (0,0), (-1,-1), 8),
             ('GRID', (0,0), (-1, -1), 0.5, colors.black),
             ('TEXTCOLOR', (1,0), (1,0), colors.red),
@@ -86,6 +87,6 @@ def build(fname, start, src):
     doc.build(content)
 
 if __name__ == "__main__":
-    build("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", date.today(), srcmock)
+    build(config['report']['test'],date.today(), srcmock)
 
 

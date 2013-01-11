@@ -11,6 +11,8 @@ from datetime import timedelta
 
 from report import build #view
 from activity import foo, sum_dict
+from config import config
+
 
 xs = sum(foo(date(2012, 12, 21), date(2012, 12, 30)), [])
 ys = sum_dict(xs).items()
@@ -28,7 +30,4 @@ def bar(start, d, h):
     print r
     return r
 
-build("/home/nori/Desktop/work/pdf/forDayCare/test.pdf", 
-        date(2012, 12, 23),
-        bar)
-
+build(config['output'], date(2012, 12, 23),bar)
